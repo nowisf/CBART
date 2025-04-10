@@ -399,10 +399,14 @@ nav {
   text-align: center;
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
+  position: relative;
+  z-index: 91;
 }
 
 .about-text {
   text-align: center;
+  position: relative;
+  z-index: 93;
 }
 
 .about-text p {
@@ -412,11 +416,20 @@ nav {
   color: var(--color-text);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
   font-weight: 400;
+  position: relative;
+  z-index: 93;
+  background-color: rgba(18, 18, 18, 0.5);
+  padding: 0.5rem;
+  border-radius: 5px;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
 }
 
 /* Contacto */
 .contact {
   background-color: var(--color-bg-secondary);
+  position: relative;
+  z-index: 2;
 }
 
 .contact-container {
@@ -424,6 +437,8 @@ nav {
   justify-content: center;
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 91;
 }
 
 .contact-info {
@@ -432,12 +447,22 @@ nav {
   align-items: center;
   text-align: center;
   max-width: 600px;
+  position: relative;
+  z-index: 91;
+  background-color: rgba(18, 18, 18, 0.7);
+  padding: 2rem;
+  border-radius: 10px;
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
 }
 
 .contact-info h3 {
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
   color: var(--color-accent);
+  position: relative;
+  z-index: 93;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
 }
 
 .contact-info p {
@@ -445,6 +470,12 @@ nav {
   font-size: 1.2rem;
   display: flex;
   align-items: center;
+  position: relative;
+  z-index: 93;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  background-color: rgba(18, 18, 18, 0.5);
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
 }
 
 .contact-info p i {
@@ -621,25 +652,63 @@ footer {
   }
 }
 
+/* Estilos específicos para el enlace "Sobre Mí" en la navegación */
+.nav-links li a[href="#sobre-mi"] {
+  color: var(--color-text);
+  font-weight: 600;
+  position: relative;
+  padding: 0.5rem 0;
+  transition: color 0.3s ease;
+}
+
+.nav-links li a[href="#sobre-mi"]:hover,
+.nav-links li a[href="#sobre-mi"].active {
+  color: var(--color-accent);
+}
 /* Estilo específico para el título de Sobre Mí */
 #sobre-mi h2 {
   opacity: 1 !important;
   color: var(--color-accent) !important;
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7) !important;
-  transform: none !important;
   position: relative;
-  z-index: 5;
-  background-color: rgba(18, 18, 18, 0.9);
+  z-index: 93;
+  background: linear-gradient(
+    to right,
+    rgba(18, 18, 18, 0.95),
+    rgba(30, 30, 30, 0.95),
+    rgba(18, 18, 18, 0.95)
+  );
   display: block;
-  padding: 0.5rem 2rem;
-  border-radius: 5px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  width: fit-content;
+  padding: 1rem 3.5rem;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  width: 350px;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 4rem;
   text-align: center;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
+  border: 1px solid rgba(201, 168, 117, 0.4);
+  letter-spacing: 3px;
+  font-size: 2.8rem;
+  transition: all 0.5s ease;
+  will-change: transform, text-shadow, box-shadow, color;
+}
+
+#sobre-mi h2::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-accent),
+    transparent
+  );
+  margin: 1.2rem auto 0;
+  transition: width 0.5s ease, background 0.5s ease;
 }
 
 #sobre-mi {
@@ -647,4 +716,24 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+/* Estilo específico para el título de Contacto */
+#contacto h2 {
+  opacity: 1 !important;
+  color: var(--color-accent) !important;
+  position: relative;
+  z-index: 93;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9) !important;
+  background-color: rgba(18, 18, 18, 0.9);
+  display: block;
+  width: 250px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  padding: 0.7rem 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
 }

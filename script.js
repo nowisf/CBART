@@ -72,6 +72,37 @@ document.addEventListener("DOMContentLoaded", function () {
       blurOverlay.classList.remove("active");
     }
 
+    // Proteger el texto de las secciones importantes
+    const aboutSection = document.getElementById("sobre-mi");
+    const contactSection = document.getElementById("contacto");
+    const aboutContent = document.querySelector(".about-content");
+    const contactInfo = document.querySelector(".contact-info");
+    const sobreMiTitle = document.querySelector("#sobre-mi h2");
+    const contactTitle = document.querySelector("#contacto h2");
+    const aboutText = document.querySelector(".about-text");
+    const contactInfoItems = document.querySelectorAll(".contact-info p");
+    const socialLinks = document.querySelector(".social-links");
+
+    if (aboutSection && contactSection) {
+      const aboutRect = aboutSection.getBoundingClientRect();
+      const contactRect = contactSection.getBoundingClientRect();
+
+      // Proteger los textos con z-index
+      if (aboutContent) {
+        aboutContent.style.zIndex = "91";
+        aboutSection.style.zIndex = "2";
+      }
+      if (contactInfo) {
+        contactInfo.style.zIndex = "91";
+        contactSection.style.zIndex = "2";
+      }
+      if (sobreMiTitle) sobreMiTitle.style.zIndex = "93";
+      if (contactTitle) contactTitle.style.zIndex = "93";
+      if (aboutText) aboutText.style.zIndex = "93";
+      if (socialLinks) socialLinks.style.zIndex = "93";
+      contactInfoItems.forEach((item) => (item.style.zIndex = "93"));
+    }
+
     // Añadir efecto de halo a los títulos durante el scroll
     sectionTitles.forEach((title) => {
       const rect = title.getBoundingClientRect();
@@ -142,6 +173,82 @@ document.addEventListener("DOMContentLoaded", function () {
         item.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
       }
     });
+
+    // Marcar enlaces activos al hacer scroll
+    const sections = document.querySelectorAll("section");
+    const navLinks = document.querySelectorAll(".nav-links a");
+
+    let currentSection = "";
+
+    sections.forEach((section) => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.clientHeight;
+
+      // 300px de offset para activar la sección un poco antes
+      if (window.scrollY >= sectionTop - 300) {
+        currentSection = section.getAttribute("id");
+      }
+    });
+
+    navLinks.forEach((link) => {
+      link.classList.remove("active");
+      if (link.getAttribute("href") === `#${currentSection}`) {
+        link.classList.add("active");
+      }
+    });
+
+    // Efecto de sombreado para el título "Sobre Mí" al hacer scroll
+    const aboutTitle = document.querySelector("#sobre-mi h2");
+    const aboutRect = document
+      .getElementById("sobre-mi")
+      .getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+
+    // Si la sección "Sobre Mí" está visible
+    if (aboutRect.top < windowHeight && aboutRect.bottom > 0) {
+      // Calcular cuánto ha entrado en la vista (como porcentaje)
+      const visibilityPercent = 1 - aboutRect.top / windowHeight;
+
+      // Limitar el valor entre 0 y 1
+      const limitedVisibility = Math.max(
+        0,
+        Math.min(1, visibilityPercent * 1.5)
+      );
+
+      // Aplicar efecto de sombreado y transformación basado en el scroll
+      const shadowBlur = 5 + limitedVisibility * 15;
+      const shadowOpacity = 0.5 + limitedVisibility * 0.5;
+      const translateY = -5 * limitedVisibility;
+      const scale = 1 + 0.05 * limitedVisibility;
+
+      aboutTitle.style.textShadow = `0 2px ${shadowBlur}px rgba(201, 168, 117, ${shadowOpacity})`;
+      aboutTitle.style.transform = `translateY(${translateY}px) scale(${scale})`;
+
+      // Aplicar brillo al título según la posición
+      if (limitedVisibility > 0.6) {
+        // Aumentar gradualmente el brillo
+        const glowIntensity = (limitedVisibility - 0.6) * 2.5; // 0 a 1 cuando va de 0.6 a 1
+        aboutTitle.style.boxShadow = `0 6px 20px rgba(0, 0, 0, 0.4), 
+                                     inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                                     0 0 ${
+                                       10 + glowIntensity * 20
+                                     }px rgba(201, 168, 117, ${
+          glowIntensity * 0.5
+        })`;
+
+        // Efecto de cambio de color
+        if (limitedVisibility > 0.8) {
+          const colorIntensity = (limitedVisibility - 0.8) * 5; // 0 a 1 cuando va de 0.8 a 1
+          aboutTitle.style.color = `rgb(255, ${201 + colorIntensity * 54}, ${
+            117 + colorIntensity * 138
+          })`;
+        }
+      } else {
+        // Restablecer cuando no está en la posición óptima
+        aboutTitle.style.boxShadow = `0 6px 20px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1)`;
+        aboutTitle.style.color = "var(--color-accent)";
+      }
+    }
   });
 
   // Función para abrir el modal
