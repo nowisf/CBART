@@ -9,7 +9,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const prevBtn = document.getElementById("prevBtn");
   const nextBtn = document.getElementById("nextBtn");
   const nav = document.querySelector("nav");
-  const contactForm = document.getElementById("contactForm");
+  const sectionTitles = document.querySelectorAll("section h2");
+
+  // Crear contenedor para el efecto de desenfoque
+  const body = document.querySelector("body");
+  const blurOverlay = document.createElement("div");
+  blurOverlay.classList.add("blur-overlay");
+  body.appendChild(blurOverlay);
 
   let currentImgIndex = 0;
   const galleryImages = Array.from(
@@ -28,13 +34,114 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Cambiar estilo de navegación al hacer scroll
+  // Añadir clase para efecto de rotación 3D a las imágenes
+  galleryItems.forEach((item) => {
+    item.classList.add("rotate-3d-effect");
+  });
+
+  // Cambiar estilo de navegación y aplicar desenfoque al hacer scroll
   window.addEventListener("scroll", function () {
-    if (window.scrollY > 50) {
+    const scrollPosition = window.scrollY;
+    const maxScroll = document.body.scrollHeight - window.innerHeight;
+    const scrollPercentage = scrollPosition / maxScroll;
+
+    // Navegación
+    if (scrollPosition > 50) {
       nav.classList.add("scrolled");
     } else {
       nav.classList.remove("scrolled");
     }
+
+    // Efecto de desenfoque exagerado basado en el scroll
+    const opacityValue = Math.min(scrollPosition / 500, 0.4); // Aumentado a 40% máximo
+    blurOverlay.style.opacity = opacityValue;
+
+    // Activar blur más intenso después de cierto umbral
+    if (scrollPosition > 200) {
+      blurOverlay.classList.add("active");
+
+      // Verificar si la sección "Sobre mí" está en la vista
+      const aboutSection = document.getElementById("sobre-mi");
+      const aboutRect = aboutSection.getBoundingClientRect();
+
+      // Si la sección "Sobre mí" está en la vista, reducir la opacidad del blur
+      if (aboutRect.top < window.innerHeight && aboutRect.bottom > 0) {
+        blurOverlay.style.opacity = Math.min(opacityValue * 0.5, 0.15);
+      }
+    } else {
+      blurOverlay.classList.remove("active");
+    }
+
+    // Añadir efecto de halo a los títulos durante el scroll
+    sectionTitles.forEach((title) => {
+      const rect = title.getBoundingClientRect();
+
+      // Comprobar si es el título de la sección "Sobre mí"
+      const isSobreMiTitle =
+        title.parentElement && title.parentElement.id === "sobre-mi";
+
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        const titleVisibility =
+          1 -
+          Math.abs(rect.top - window.innerHeight / 2) /
+            (window.innerHeight / 2);
+
+        // No aplicar efecto de halo/glow al título de "Sobre mí"
+        if (titleVisibility > 0.7 && !isSobreMiTitle) {
+          title.classList.add("glow-effect");
+        } else {
+          title.classList.remove("glow-effect");
+        }
+
+        // Asegurar que el título de "Sobre mí" siempre tenga opacidad completa
+        if (isSobreMiTitle) {
+          title.style.opacity = 1;
+          title.style.color = "var(--color-accent)"; // Mantener el color original
+        }
+      }
+    });
+
+    // Añadir efecto de parallax más exagerado a secciones
+    document.querySelectorAll("section").forEach((section) => {
+      const rect = section.getBoundingClientRect();
+
+      // Si la sección está visible en la pantalla
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        const sectionCenter = rect.top + rect.height / 2;
+        const distanceFromCenter = window.innerHeight / 2 - sectionCenter;
+        const maxDistance = window.innerHeight / 2;
+        const scrollPercent = distanceFromCenter / maxDistance;
+
+        // No aplicar efecto de transparencia a la sección "Sobre mí"
+        if (section.id === "sobre-mi") {
+          // Aplicar solo movimiento sutil
+          section.style.transform = `translateY(${scrollPercent * -10}px)`;
+          section.style.opacity = 1; // Mantener opacidad completa
+        } else {
+          // Para otras secciones, aplicar el efecto completo
+          section.style.transform = `translateY(${
+            scrollPercent * -30
+          }px) scale(${1 + Math.abs(scrollPercent) * 0.05})`;
+          section.style.opacity = 0.6 + Math.abs(scrollPercent) * 0.4;
+        }
+      }
+    });
+
+    // Efecto de rotación 3D para imágenes al scroll
+    galleryItems.forEach((item, index) => {
+      const rect = item.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        const itemCenter = rect.top + rect.height / 2;
+        const distanceFromCenter = window.innerHeight / 2 - itemCenter;
+        const scrollPercent = distanceFromCenter / (window.innerHeight / 2);
+
+        // Aplicar rotación 3D basada en la posición del scroll
+        const rotateX = scrollPercent * 10; // Rotación en eje X
+        const rotateY = (index % 2 === 0 ? -1 : 1) * scrollPercent * 15; // Rotación en eje Y
+
+        item.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      }
+    });
   });
 
   // Función para abrir el modal
@@ -105,71 +212,26 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Manejar el formulario de contacto (simulación)
-  if (contactForm) {
-    contactForm.addEventListener("submit", function (e) {
+  // Navegación suave para los enlaces internos
+  document.querySelectorAll("a[href^='#']").forEach((anchor) => {
+    anchor.addEventListener("click", function (e) {
       e.preventDefault();
+      const targetId = this.getAttribute("href");
+      const targetSection = document.querySelector(targetId);
 
-      // Simulación de envío (en un sitio real, aquí iría la lógica de envío al servidor)
-      const nombre = document.getElementById("nombre").value;
-      const email = document.getElementById("email").value;
-      const mensaje = document.getElementById("mensaje").value;
+      if (targetSection) {
+        // Offset para compensar la barra de navegación fija
+        const navHeight = nav.offsetHeight;
+        const targetPosition =
+          targetSection.getBoundingClientRect().top +
+          window.pageYOffset -
+          navHeight;
 
-      // Validación simple
-      if (nombre && email && mensaje) {
-        // Aquí iría el código para enviar los datos al servidor
-        alert("¡Gracias por tu mensaje! Te responderemos lo antes posible.");
-        contactForm.reset();
-      } else {
-        alert("Por favor, completa todos los campos del formulario.");
+        window.scrollTo({
+          top: targetPosition,
+          behavior: "smooth",
+        });
       }
     });
-  }
-
-  // Animación de aparición para los elementos al hacer scroll
-  const observerOptions = {
-    threshold: 0.1,
-  };
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      }
-    });
-  }, observerOptions);
-
-  // Elementos a animar
-  document.querySelectorAll("section").forEach((section) => {
-    section.classList.add("fade-in");
-    observer.observe(section);
-  });
-
-  document.querySelectorAll(".gallery-item").forEach((item) => {
-    item.classList.add("fade-in");
-    observer.observe(item);
-  });
-
-  // Añadir clase para la animación en CSS
-  const style = document.createElement("style");
-  style.textContent = `
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .gallery-item.fade-in {
-            transition-delay: calc(0.1s * var(--i, 0));
-        }
-    `;
-  document.head.appendChild(style);
-
-  // Asignar índices para el retraso de la animación
-  document.querySelectorAll(".gallery-item").forEach((item, i) => {
-    item.style.setProperty("--i", i % 4);
   });
 });

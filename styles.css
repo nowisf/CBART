@@ -8,6 +8,8 @@
   --color-accent-dark: #9e7e4e;
   --font-primary: "Raleway", sans-serif;
   --font-secondary: "Playfair Display", serif;
+  --blur-nav: 5px;
+  --blur-nav-scrolled: 25px;
 }
 
 * {
@@ -46,6 +48,43 @@ h3 {
 
 section {
   padding: 5rem 2rem;
+  transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.8s ease;
+  will-change: transform, opacity;
+  overflow: hidden;
+}
+
+section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-accent),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+section::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-accent),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
 section h2 {
@@ -54,6 +93,8 @@ section h2 {
   margin-bottom: 3rem;
   position: relative;
   color: var(--color-accent);
+  transition: text-shadow 0.8s ease, transform 0.8s ease, color 0.8s ease;
+  will-change: text-shadow, transform, color;
 }
 
 section h2::after {
@@ -91,14 +132,19 @@ nav {
   position: fixed;
   width: 100%;
   z-index: 100;
-  background-color: rgba(18, 18, 18, 0.9);
-  backdrop-filter: blur(10px);
+  background-color: rgba(18, 18, 18, 0.7);
+  backdrop-filter: blur(var(--blur-nav));
+  -webkit-backdrop-filter: blur(var(--blur-nav));
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .scrolled {
   padding: 1rem 2rem;
+  background-color: rgba(18, 18, 18, 0.9);
+  backdrop-filter: blur(var(--blur-nav-scrolled));
+  -webkit-backdrop-filter: blur(var(--blur-nav-scrolled));
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .logo {
@@ -187,24 +233,35 @@ nav {
   overflow: hidden;
   border-radius: 5px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.5s ease;
   cursor: pointer;
   aspect-ratio: 1;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.rotate-3d-effect {
+  transition: transform 0.5s ease;
+  transform-origin: center center;
 }
 
 .gallery-item:hover {
-  transform: translateY(-5px);
+  transform: translateY(-15px) scale(1.05);
+  box-shadow: 0 20px 40px rgba(201, 168, 117, 0.4);
+  z-index: 5;
 }
 
 .gallery-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  backface-visibility: hidden;
 }
 
 .gallery-item:hover img {
-  transform: scale(1.05);
+  transform: scale(1.15);
 }
 
 .overlay {
@@ -213,16 +270,21 @@ nav {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
 }
 
 .gallery-item:hover .overlay {
   opacity: 1;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 .overlay span {
@@ -301,7 +363,26 @@ nav {
 
 /* Sobre Mí */
 .about {
+  background-color: rgba(18, 18, 18, 0.85);
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  margin-top: 2rem;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.about::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-color: var(--color-bg);
+  opacity: 0.75;
+  z-index: -1;
 }
 
 .about-content {
@@ -311,6 +392,13 @@ nav {
   justify-content: center;
   max-width: 800px;
   margin: 0 auto;
+  background-color: rgba(18, 18, 18, 0.6);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
 .about-text {
@@ -321,7 +409,9 @@ nav {
   margin-bottom: 1.5rem;
   font-size: 1.1rem;
   line-height: 1.8;
-  color: var(--color-text-secondary);
+  color: var(--color-text);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  font-weight: 400;
 }
 
 /* Contacto */
@@ -330,9 +420,8 @@ nav {
 }
 
 .contact-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  grid-gap: 3rem;
+  display: flex;
+  justify-content: center;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -340,10 +429,12 @@ nav {
 .contact-info {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 600px;
 }
 
-.contact-info h3,
-.contact-form h3 {
+.contact-info h3 {
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
   color: var(--color-accent);
@@ -351,7 +442,7 @@ nav {
 
 .contact-info p {
   margin-bottom: 1rem;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
 }
@@ -374,7 +465,7 @@ nav {
   height: 40px;
   border-radius: 50%;
   background-color: var(--color-bg);
-  margin-right: 1rem;
+  margin: 0 0.5rem;
   color: var(--color-text);
   transition: all 0.3s ease;
 }
@@ -450,6 +541,37 @@ footer {
   font-size: 0.9rem;
 }
 
+/* Efecto de desenfoque al scroll más intenso */
+.blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 90;
+  background-color: var(--color-bg);
+  opacity: 0;
+  transition: opacity 0.5s ease, backdrop-filter 0.5s ease;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  mix-blend-mode: overlay;
+}
+
+.blur-overlay.active {
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  opacity: 0.4;
+}
+
+/* Añadir efecto de halo a los títulos durante el scroll */
+.glow-effect {
+  text-shadow: 0 0 10px var(--color-accent), 0 0 20px var(--color-accent),
+    0 0 30px var(--color-accent);
+  transform: scale(1.05);
+  color: #ffffff;
+}
+
 /* Responsive */
 @media screen and (max-width: 768px) {
   .menu-toggle {
@@ -497,4 +619,32 @@ footer {
   .contact-container {
     grid-template-columns: 1fr;
   }
+}
+
+/* Estilo específico para el título de Sobre Mí */
+#sobre-mi h2 {
+  opacity: 1 !important;
+  color: var(--color-accent) !important;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7) !important;
+  transform: none !important;
+  position: relative;
+  z-index: 5;
+  background-color: rgba(18, 18, 18, 0.9);
+  display: block;
+  padding: 0.5rem 2rem;
+  border-radius: 5px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+#sobre-mi {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
