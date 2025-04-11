@@ -430,6 +430,9 @@ nav {
   background-color: var(--color-bg-secondary);
   position: relative;
   z-index: 2;
+  margin-top: 2rem;
+  padding-top: 5rem;
+  clear: both;
 }
 
 .contact-container {
@@ -593,6 +596,15 @@ footer {
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   opacity: 0.4;
+}
+
+/* Separador de secciones */
+.section-separator {
+  height: 3rem;
+  width: 100%;
+  background-color: transparent;
+  position: relative;
+  z-index: 1;
 }
 
 /* Añadir efecto de halo a los títulos durante el scroll */
